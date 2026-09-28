@@ -1,0 +1,24 @@
+databases:
+  - name: respel-db
+    databaseName: respel
+    user: respel
+services:
+  - type: web
+    name: respel-gestion
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: respel-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: APP_USER
+        sync: false
+      - key: APP_PASSWORD_HASH
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.13.7
